@@ -1,0 +1,34 @@
+import { DataTypes } from "sequelize";
+import { sequelize } from "../db.js";
+
+export const User = sequelize.define(
+	"User",
+	{
+		Id: {
+			type: DataTypes.INTEGER,
+			autoIncrement: true,
+		},
+		Name: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		Nurname: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		Dni: {
+			type: DataTypes.INTEGER,
+			primaryKey: true,
+			allowNull: false,
+		},
+		Cell: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		Email: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+	},
+	{ timestamps: false }
+);
