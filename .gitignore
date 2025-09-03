@@ -1,3 +1,4 @@
 node_modules
-Models
+src\models\hotel
 StarlightHotel-request
+src/models/hotel

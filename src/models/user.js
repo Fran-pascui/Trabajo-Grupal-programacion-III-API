@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, STRING } from "sequelize";
 import { sequelize } from "../db.js";
 
 export const User = sequelize.define(
@@ -28,6 +28,10 @@ export const User = sequelize.define(
 		Email: {
 			type: DataTypes.STRING,
 			allowNull: false,
+		},
+		Class: {
+			type: STRING,
+			defaultValue: "User",
 		},
 	},
 	{ timestamps: false }
