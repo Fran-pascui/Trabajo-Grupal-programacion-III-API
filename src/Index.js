@@ -3,7 +3,7 @@ import port from "./configs.js";
 import { sequelize } from "./db.js";
 import hotelRoutes from "./routes/hotel.routes.js";
 
-import "./models/user.js";
+import "./models/index.js";
 
 const app = express();
 

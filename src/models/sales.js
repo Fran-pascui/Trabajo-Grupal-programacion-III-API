@@ -1,24 +1,24 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, STRING } from "sequelize";
 import { sequelize } from "../db.js";
 
-export const Reservations = sequelize.define(
-	"Reservations",
+export const Sales = sequelize.define(
+	"Sales",
 	{
 		Id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		Reservation_date: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		user_Dni: {
+		Start_Date: {
 			type: DataTypes.DATE,
 			allowNull: false,
 		},
-		room_Id: {
-			type: DataTypes.INTEGER,
+		End_Date: {
+			type: DataTypes.DATE,
+			allowNull: false,
+		},
+		Description: {
+			type: DataTypes.STRING,
 			allowNull: false,
 		},
 	},

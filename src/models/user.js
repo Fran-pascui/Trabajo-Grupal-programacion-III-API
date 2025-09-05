@@ -12,7 +12,7 @@ export const User = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		Nurname: {
+		Surname: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
