@@ -11,7 +11,7 @@ try {
 	app.listen(port);
 	app.use(hotelRoutes);
 	await sequelize.sync();
-	console.log("app listening in port ", port);
+	console.log("app listening in port ${port}");
 } catch (error) {
 	console.log("there was an error on initilization");
 }
