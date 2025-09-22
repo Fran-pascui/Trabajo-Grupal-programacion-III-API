@@ -4,37 +4,37 @@ import { sequelize } from "../db.js";
 export const User = sequelize.define(
 	"User",
 	{
-		Id: {
+		id: {
 			type: DataTypes.INTEGER,
 			autoIncrement: true,
 		},
-		Name: {
+		name: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		Surname: {
+		surname: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		Dni: {
+		dni: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
 			allowNull: false,
 		},
-		Cell: {
+		cellNumber: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		Email: {
+		email: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		Password: {
+		password: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
 
-		Class: {
+		class: {
 			type: STRING,
 			defaultValue: "User",
 		},

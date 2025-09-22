@@ -6,6 +6,7 @@ import hotelRoutes from "./routes/hotel.routes.js";
 import "./models/index.js";
 
 const app = express();
+app.use(express.json());
 
 try {
 	app.listen(port);
