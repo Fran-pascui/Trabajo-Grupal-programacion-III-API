@@ -9,7 +9,7 @@ export const login = async (req, res) => {
 	if (!resultEmail) return res.status(401).send({ message: "Email invalido" });
 	const resultPassword = password;
 	if (!resultPassword)
-		return res.status(401).send({ message: "Contrasela invalido" });
+		return res.status(401).send({ message: "Contraseña invalido" });
 
 	const user = await User.findOne({
 		where: {
@@ -24,11 +24,13 @@ export const login = async (req, res) => {
 	if (!comparison)
 		return res.status(401).send({ message: "Contraseña incorrecta" });
 
-	const secretKey = "xd";
+	/* const secretKey = "xd";
 
 	const token = jwt.sign({ email }, secretKey, { expiresIn: "1h" });
-
-	return res.json(token);
+*/
+	return res.json({
+		message: `El usuario ${user} se ha logeado correctamente.`,
+	});
 };
 
 export const register = async (req, res) => {
