@@ -24,13 +24,11 @@ export const login = async (req, res) => {
 	if (!comparison)
 		return res.status(401).send({ message: "Contraseña incorrecta" });
 
-	/* const secretKey = "xd";
+	const secretKey = "hoteles-starligth";
 
 	const token = jwt.sign({ email }, secretKey, { expiresIn: "1h" });
-*/
-	return res.json({
-		message: `El usuario ${user} se ha logeado correctamente.`,
-	});
+
+	return res.json(token);
 };
 
 export const register = async (req, res) => {
