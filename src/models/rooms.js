@@ -1,4 +1,4 @@
-import { DataTypes, STRING } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "../db.js";
 
 export const Rooms = sequelize.define(
@@ -9,15 +9,63 @@ export const Rooms = sequelize.define(
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		RooomNo: {
+		RoomNo: { 
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		Type: {
+		Nombre: {  
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		Avaliable: {
+		Personas: { 
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
+		Capacidad: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		Tipo: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		Texto: {
+			type: DataTypes.TEXT,
+			allowNull: true,
+		},
+		Area: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		},
+		Imagen: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		},
+		TarifaSA: {
+			type: DataTypes.DECIMAL(10, 2),
+			allowNull: true,
+		},
+		TarifaAD: {
+			type: DataTypes.DECIMAL(10, 2),
+			allowNull: true,
+		},
+		TarifaMP: {
+			type: DataTypes.DECIMAL(10, 2),
+			allowNull: true,
+		},
+		TarifaPC: {
+			type: DataTypes.DECIMAL(10, 2),
+			allowNull: true,
+		},
+		TarifaAI: {
+			type: DataTypes.DECIMAL(10, 2),
+			allowNull: true,
+		},
+		Amenities: {
+			type: DataTypes.TEXT,
+			allowNull: true,
+		},
+		Disponible: {
 			type: DataTypes.BOOLEAN,
 			allowNull: true,
 			defaultValue: true,

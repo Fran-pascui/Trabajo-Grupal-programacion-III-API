@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import port from "./configs.js";
 import { sequelize } from "./db.js";
 import hotelRoutes from "./routes/hotel.routes.js";
@@ -9,19 +8,11 @@ import "./models/index.js";
 const app = express();
 
 try {
-	app.listen(port);
 	app.use(express.json());
-	app.use(
-		cors({
-			origin: "http://localhost:5173",
-			methods: ["GET", "POST", "PUT", "DELETE"],
-			credentials: true,
-		})
-	);
-	app.use(hotelRoutes);
-
+	app.use("/api", hotelRoutes); 
 	await sequelize.sync();
-	console.log("app listening in port ${port}");
+	app.listen(port);
+	console.log(`App listening on port ${port}`);
 } catch (error) {
-	console.log("there was an error on initilization");
+	console.log("There was an error on initialization:", error);
 }
