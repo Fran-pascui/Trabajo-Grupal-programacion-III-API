@@ -64,3 +64,92 @@ export const register = async (req, res) => {
 		return res.status(500).json({ message: "Error en el servidor" });
 	}
 };
+
+router.post("/rooms", async (req, res) => {
+  console.log("🚀 RUTA POST /rooms EJECUTÁNDOSE");
+  console.log("📥 Datos recibidos:", req.body);
+  
+  try {
+    const roomData = req.body;
+    const newRoom = await Rooms.create(roomData);
+    
+    console.log("✅ Habitación creada:", newRoom);
+    
+    res.status(201).json({
+      success: true,
+      data: newRoom,
+      message: "Room creado exitosamente"
+    });
+  } catch (error) {
+    console.error("❌ Error al crear room:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+      error: error.message
+    });
+  }
+});
+
+
+router.put("/rooms/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const roomData = req.body;
+		
+		const [updatedRowsCount] = await Rooms.update(roomData, {
+			where: { id: id }
+		});
+		
+		if (updatedRowsCount === 0) {
+			return res.status(404).json({
+				success: false,
+				message: "Room no encontrado"
+			});
+		}
+		
+		const updatedRoom = await Rooms.findByPk(id);
+		
+		res.json({
+			success: true,
+			data: updatedRoom,
+			message: "Room actualizado exitosamente"
+		});
+	} catch (error) {
+		console.error("Error al actualizar room:", error);
+		res.status(500).json({
+			success: false,
+			message: "Error interno del servidor",
+			error: error.message
+		});
+	}
+});
+
+
+router.delete("/rooms/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		
+		const deletedRowsCount = await Rooms.destroy({
+			where: { id: id }
+		});
+		
+		if (deletedRowsCount === 0) {
+			return res.status(404).json({
+				success: false,
+				message: "Room no encontrado"
+			});
+		}
+		
+		res.json({
+			success: true,
+			message: "Room eliminado exitosamente"
+		});
+	} catch (error) {
+		console.error("Error al eliminar room:", error);
+		res.status(500).json({
+			success: false,
+			message: "Error interno del servidor",
+			error: error.message
+		});
+	}
+});
