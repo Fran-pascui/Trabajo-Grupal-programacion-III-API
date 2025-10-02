@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.js";
+import { Rooms } from "../models/rooms.js";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -65,7 +66,7 @@ export const register = async (req, res) => {
   }
 };
 
-router.post("/rooms", async (req, res) => {
+export const createRoom = async (req, res) => {
   console.log("🚀 RUTA POST /rooms EJECUTÁNDOSE");
   console.log("📥 Datos recibidos:", req.body);
 
@@ -88,15 +89,15 @@ router.post("/rooms", async (req, res) => {
       error: error.message,
     });
   }
-});
+};
 
-router.put("/rooms/:id", async (req, res) => {
+export const updateRoom = async (req, res) => {
   try {
     const { id } = req.params;
     const roomData = req.body;
 
     const [updatedRowsCount] = await Rooms.update(roomData, {
-      where: { id: id },
+      where: { Id: id },
     });
 
     if (updatedRowsCount === 0) {
@@ -121,14 +122,73 @@ router.put("/rooms/:id", async (req, res) => {
       error: error.message,
     });
   }
-});
+};
 
-router.delete("/rooms/:id", async (req, res) => {
+export const getAllRooms = async (req, res) => {
+  try {
+    const { tipo, capacidad } = req.query;
+    let whereClause = {};
+    
+    if (tipo) {
+      whereClause.Tipo = tipo;
+    }
+    
+    if (capacidad) {
+      whereClause.Capacidad = capacidad;
+    }
+    
+    const rooms = await Rooms.findAll({
+      where: whereClause
+    });
+    
+    res.json({
+      success: true,
+      data: rooms,
+      message: "Rooms obtenidos exitosamente",
+    });
+  } catch (error) {
+    console.error("Error al obtener rooms:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  }
+};
+
+export const getRoomById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const room = await Rooms.findByPk(id);
+
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: "Room no encontrado",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: room,
+      message: "Room obtenido exitosamente",
+    });
+  } catch (error) {
+    console.error("Error al obtener room:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteRoom = async (req, res) => {
   try {
     const { id } = req.params;
 
     const deletedRowsCount = await Rooms.destroy({
-      where: { id: id },
+      where: { Id: id },
     });
 
     if (deletedRowsCount === 0) {
@@ -150,4 +210,4 @@ router.delete("/rooms/:id", async (req, res) => {
       error: error.message,
     });
   }
-});
+};

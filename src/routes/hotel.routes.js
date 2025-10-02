@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Rooms } from "../models/rooms.js"; // AGREGADO
+import { createRoom, updateRoom, deleteRoom } from "../services/hotel.services.js";
 
 const router = Router();
 
@@ -53,5 +54,14 @@ router.get("/rooms/:id", async (req, res) => { // AGREGADO
 		});
 	}
 });
+
+// Ruta para crear un nuevo room
+router.post("/rooms", createRoom);
+
+// Ruta para actualizar un room por ID
+router.put("/rooms/:id", updateRoom);
+
+// Ruta para eliminar un room por ID
+router.delete("/rooms/:id", deleteRoom);
 
 export default router;

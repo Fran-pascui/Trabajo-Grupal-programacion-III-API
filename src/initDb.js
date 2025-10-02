@@ -72,14 +72,13 @@ const imagenes = {
 
 
 const tarifas = {
-  1: { SA: 50, AD: 65, MP: 90, PC: 120, AI: 150 },
-  2: { SA: 80, AD: 100, MP: 130, PC: 160, AI: 200 },
-  3: { SA: 120, AD: 150, MP: 180, PC: 220, AI: 260 },
-  4: { SA: 70, AD: 90, MP: 120, PC: 150, AI: 180 },
-  5: { SA: 90, AD: 110, MP: 140, PC: 180, AI: 220 },
-  6: { SA: 140, AD: 170, MP: 210, PC: 250, AI: 300 },
+  1: 75000, 
+  2: 125000, 
+  3: 180000,
+  4: 100000, 
+  5: 135000, 
+  6: 200000, 
 };
-
 
 const amenitys = {
   1: ["WiFi gratuito", "Desayuno incluido", "Aire acondicionado", "Televisión", "Baño privado", "Caja fuerte", "Minibar", "Servicio de limpieza"],
@@ -112,11 +111,7 @@ export async function initDatabase() {
         Texto: habitacion.texto,
         Area: habitacion.area,
         Imagen: imagen,
-        TarifaSA: tarifa.SA,
-        TarifaAD: tarifa.AD,
-        TarifaMP: tarifa.MP,
-        TarifaPC: tarifa.PC,
-        TarifaAI: tarifa.AI,
+        Tarifa: tarifa,
         Amenities: JSON.stringify(amenities),
         Disponible: true,
       });

@@ -41,25 +41,9 @@ export const Rooms = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		TarifaSA: {
+		Tarifa: {
 			type: DataTypes.DECIMAL(10, 2),
-			allowNull: true,
-		},
-		TarifaAD: {
-			type: DataTypes.DECIMAL(10, 2),
-			allowNull: true,
-		},
-		TarifaMP: {
-			type: DataTypes.DECIMAL(10, 2),
-			allowNull: true,
-		},
-		TarifaPC: {
-			type: DataTypes.DECIMAL(10, 2),
-			allowNull: true,
-		},
-		TarifaAI: {
-			type: DataTypes.DECIMAL(10, 2),
-			allowNull: true,
+			allowNull: false,
 		},
 		Amenities: {
 			type: DataTypes.TEXT,
