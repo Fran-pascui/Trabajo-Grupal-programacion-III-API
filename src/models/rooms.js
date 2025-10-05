@@ -9,15 +9,15 @@ export const Rooms = sequelize.define(
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		RoomNo: { 
+		RoomNo: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		Nombre: {  
+		Nombre: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		Personas: { 
+		Personas: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
