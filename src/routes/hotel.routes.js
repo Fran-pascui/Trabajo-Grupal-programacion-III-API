@@ -6,6 +6,7 @@ import {
 	deleteRoom,
 	register,
 	login,
+	checkRoomAvailability,
 } from "../services/hotel.services.js";
 const router = Router();
 
@@ -57,6 +58,9 @@ router.get("/rooms/:id", async (req, res) => {
 		});
 	}
 });
+
+
+router.get("/availability", checkRoomAvailability);
 
 router.post("/register", register);
 router.post("/login", login);

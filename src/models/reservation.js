@@ -14,10 +14,14 @@ export const Reservations = sequelize.define(
 			allowNull: false,
 		},
 		user_Dni: {
-			type: DataTypes.DATE,
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
 		room_Id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
+		days: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
