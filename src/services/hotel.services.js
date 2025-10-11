@@ -296,10 +296,10 @@ export const checkRoomAvailability = async (req, res) => {
         habitacionesRequeridas: parseInt(cantidadHabitaciones),
         fechaInicio: fechaInicioDB,
         fechaFin: fechaFinDB,
-        habitaciones: habitacionesRealmenteDisponibles.slice(
-          0,
-          parseInt(cantidadHabitaciones)
-        ),
+        habitaciones: habitacionesRealmenteDisponibles,
+       
+       
+       
         mensaje: hayDisponibilidad
           ? "Habitaciones disponibles para las fechas solicitadas"
           : "No hay habitaciones disponibles para las fechas solicitadas",
