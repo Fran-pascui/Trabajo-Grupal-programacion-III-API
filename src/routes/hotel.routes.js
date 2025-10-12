@@ -4,16 +4,16 @@ import {
 	createRoom,
 	updateRoom,
 	deleteRoom,
-	register,
-	login,
 	checkRoomAvailability,
 } from "../services/hotel.services.js";
+import { login, register } from "../services/auth.services.js";
+import { Reservation } from "../services/reservation.services.js";
+
 const router = Router();
 
-router.get("/home", (req, res) => {
-	res.send("holaa xd");
-});
-
+router.post("/register", register);
+router.post("/login", login);
+router.post("/Reservation", Reservation);
 router.get("/rooms", async (req, res) => {
 	try {
 		const rooms = await Rooms.findAll();
@@ -31,7 +31,6 @@ router.get("/rooms", async (req, res) => {
 		});
 	}
 });
-
 router.get("/rooms/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
@@ -58,17 +57,9 @@ router.get("/rooms/:id", async (req, res) => {
 		});
 	}
 });
-
-
 router.get("/availability", checkRoomAvailability);
-
-router.post("/register", register);
-router.post("/login", login);
-
 router.post("/rooms", createRoom);
-
 router.put("/rooms/:id", updateRoom);
-
 router.delete("/rooms/:id", deleteRoom);
 
 export default router;

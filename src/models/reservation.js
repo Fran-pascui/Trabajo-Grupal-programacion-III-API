@@ -9,19 +9,19 @@ export const Reservations = sequelize.define(
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		Reservation_date: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
 		user_Dni: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		room_Id: {
-			type: DataTypes.INTEGER,
+		checkIn: {
+			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		days: {
+		checkOut: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		room_Id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
