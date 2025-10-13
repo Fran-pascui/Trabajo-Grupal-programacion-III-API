@@ -7,13 +7,18 @@ import {
 	checkRoomAvailability,
 } from "../services/hotel.services.js";
 import { login, register } from "../services/auth.services.js";
-import { Reservation } from "../services/reservation.services.js";
+import {
+	deleteReservation,
+	Reservation,
+} from "../services/reservation.services.js";
+import { verifyToken } from "../services/authMidleware.js";
 
 const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
 router.post("/Reservation", Reservation);
+router.delete("/:id", verifyToken, deleteReservation);
 router.get("/rooms", async (req, res) => {
 	try {
 		const rooms = await Rooms.findAll();
