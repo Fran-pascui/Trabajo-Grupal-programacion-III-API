@@ -25,8 +25,9 @@ export const login = async (req, res) => {
 			return res.status(401).send({ message: "Contraseña incorrecta" });
 
 		const secretKey = "hoteles-starligth";
+		const typeUser = user.class;
 
-		const token = jwt.sign({ email }, secretKey, { expiresIn: "1h" });
+		const token = jwt.sign({ email, typeUser }, secretKey, { expiresIn: "1h" });
 
 		return res.json({
 			token,
