@@ -12,7 +12,7 @@ import {
 	Reservation,
 } from "../services/reservation.services.js";
 import { verifyToken } from "../services/authMidleware.js";
-
+import servicesRoutes from "./services.routes.js";
 const router = Router();
 
 router.post("/register", register);
@@ -66,5 +66,5 @@ router.get("/availability", checkRoomAvailability);
 router.post("/rooms", createRoom);
 router.put("/rooms/:id", updateRoom);
 router.delete("/rooms/:id", deleteRoom);
-
+router.use("/services", servicesRoutes);
 export default router;
