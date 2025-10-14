@@ -196,7 +196,7 @@ export const checkRoomAvailability = async (req, res) => {
 
 		const reservasExistentes = await Reservations.findAll({
 			where: {
-				Reservation_date: {
+				checkIn: {
 					[Op.gte]: fechaInicioDB,
 				},
 			},

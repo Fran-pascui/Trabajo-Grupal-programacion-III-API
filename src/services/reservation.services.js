@@ -5,11 +5,11 @@ import { sequelize } from "../db.js";
 
 export const Reservation = async (req, res) => {
 	try {
-		const { dni, checkIn, checkOut, room_Id, comment } = req.body;
+		const { email, checkIn, checkOut, room_Id, guest, comment } = req.body;
 
 		const user = await User.findOne({
 			where: {
-				dni: dni,
+				email: email,
 			},
 		});
 
@@ -18,8 +18,6 @@ export const Reservation = async (req, res) => {
 				Id: room_Id,
 			},
 		});
-		console.log(roomOk.Id);
-
 		const newReservation = await Reservations.create({
 			user_Dni: user.dni,
 			checkIn,
