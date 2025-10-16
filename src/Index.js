@@ -4,8 +4,6 @@ import { sequelize } from "./db.js";
 import hotelRoutes from "./routes/hotel.routes.js";
 import cors from "cors";
 import "./models/index.js";
-import { verifyToken } from "./services/authMidleware.js";
-
 const app = express();
 
 try {

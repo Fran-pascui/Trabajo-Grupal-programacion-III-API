@@ -14,12 +14,17 @@ import {
 import { verifyToken } from "../services/authMidleware.js";
 import servicesRoutes from "./services.routes.js";
 import usersRoutes from "./users.routes.js";
+import { emailAdminSearch } from "../services/sysadmin.services.js";
+
 const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/Reservation", Reservation);
+router.post("/Reservation", verifyToken, Reservation);
 router.delete("/:id", verifyToken, deleteReservation);
+
+router.post("/admin/searchemail", verifyToken, emailAdminSearch);
+
 router.get("/rooms", async (req, res) => {
 	try {
 		const rooms = await Rooms.findAll();
@@ -69,4 +74,5 @@ router.put("/rooms/:id", updateRoom);
 router.delete("/rooms/:id", deleteRoom);
 router.use("/services", servicesRoutes);
 router.use("/users", usersRoutes);
+
 export default router;

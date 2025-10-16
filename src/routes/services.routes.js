@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 import {
 	getAllServices,
 	getAllServicesAdmin,
@@ -7,13 +7,12 @@ import {
 	updateService,
 	deleteService,
 	restoreService,
-	deleteServicePermanently
-} from '../services/services.services.js';
+	deleteServicePermanently,
+} from "../services/services.services.js";
 
 const router = express.Router();
 
-// Rutas públicas
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
 	try {
 		const services = await getAllServices();
 		res.json(services);
@@ -22,7 +21,7 @@ router.get('/', async (req, res) => {
 	}
 });
 
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const service = await getServiceById(id);
@@ -32,8 +31,7 @@ router.get('/:id', async (req, res) => {
 	}
 });
 
-// Rutas de administración
-router.get('/admin/all', async (req, res) => {
+router.get("/admin/all", async (req, res) => {
 	try {
 		const services = await getAllServicesAdmin();
 		res.json(services);
@@ -42,7 +40,7 @@ router.get('/admin/all', async (req, res) => {
 	}
 });
 
-router.post('/admin/create', async (req, res) => {
+router.post("/admin/create", async (req, res) => {
 	try {
 		const serviceData = req.body;
 		const newService = await createService(serviceData);
@@ -52,7 +50,7 @@ router.post('/admin/create', async (req, res) => {
 	}
 });
 
-router.put('/admin/update/:id', async (req, res) => {
+router.put("/admin/update/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const serviceData = req.body;
@@ -63,7 +61,7 @@ router.put('/admin/update/:id', async (req, res) => {
 	}
 });
 
-router.delete('/admin/delete/:id', async (req, res) => {
+router.delete("/admin/delete/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const result = await deleteService(id);
@@ -73,7 +71,7 @@ router.delete('/admin/delete/:id', async (req, res) => {
 	}
 });
 
-router.put('/admin/restore/:id', async (req, res) => {
+router.put("/admin/restore/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const result = await restoreService(id);
@@ -83,7 +81,7 @@ router.put('/admin/restore/:id', async (req, res) => {
 	}
 });
 
-router.delete('/admin/delete-permanent/:id', async (req, res) => {
+router.delete("/admin/delete-permanent/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const result = await deleteServicePermanently(id);
