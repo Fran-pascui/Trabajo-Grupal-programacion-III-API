@@ -25,11 +25,37 @@ export const emailAdminSearch = async (req, res) => {
 			user: {
 				Id: user.id,
 				name: user.name,
+				dni: user.dni,
 				surname: user.surname,
 				email: user.email,
+				active: user.active,
 			},
 		});
 	} catch {
 		return res.status(500).json({ message: "Error en el servidor" });
+	}
+};
+
+export const updateRol = async (req, res) => {
+	try {
+		const { email, newRole } = req.body;
+
+		if (!email || !newRole)
+			return res.status(400).json({ error: "Faltan campos requeridos." });
+
+		const user = await User.findOne({ where: { email } });
+		if (!user) return res.status(404).json({ error: "Usuario no encontrado." });
+
+		user.class = newRole;
+		await user.save();
+
+		return res.json({
+			message: "Rol actualizado correctamente.",
+			email: user.email,
+			newRole: user.class,
+		});
+	} catch (error) {
+		console.error("Error al actualizar rol:", error);
+		return res.status(500).json({ error: "Error interno del servidor." });
 	}
 };

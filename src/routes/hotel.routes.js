@@ -14,7 +14,7 @@ import {
 import { verifyToken } from "../services/authMidleware.js";
 import servicesRoutes from "./services.routes.js";
 import usersRoutes from "./users.routes.js";
-import { emailAdminSearch } from "../services/sysadmin.services.js";
+import { emailAdminSearch, updateRol } from "../services/sysadmin.services.js";
 
 const router = Router();
 
@@ -24,6 +24,7 @@ router.post("/Reservation", verifyToken, Reservation);
 router.delete("/:id", verifyToken, deleteReservation);
 
 router.post("/admin/searchemail", verifyToken, emailAdminSearch);
+router.put("/updateRole", verifyToken, updateRol);
 
 router.get("/rooms", async (req, res) => {
 	try {

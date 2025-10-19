@@ -38,6 +38,10 @@ export const User = sequelize.define(
 			type: STRING,
 			defaultValue: "User",
 		},
+		active: {
+			type: Boolean,
+			defaultValue: true,
+		},
 	},
 	{ timestamps: false }
 );
