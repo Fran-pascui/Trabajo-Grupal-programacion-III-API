@@ -1,4 +1,4 @@
-import { User } from "../models/user.js";
+import { User } from "../models/user.js"; 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -6,23 +6,25 @@ export const login = async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
-		if (!email) return res.status(401).send({ message: "Email invalido" });
+		if (!email) {
+			return res.status(401).send({ message: "Email inválido" });
+		}
 
-		if (!password)
-			return res.status(401).send({ message: "Contraseña invalido" });
+		if (!password) {
+			return res.status(401).send({ message: "Contraseña inválida" });
+		}
 
-		const user = await User.findOne({
-			where: {
-				email,
-			},
-		});
+		const user = await User.findOne({ where: { email } });
 
-		if (!user) return res.status(401).send({ message: "usuario no existente" });
+		if (!user) {
+			return res.status(401).send({ message: "Usuario no existente" });
+		}
 
 		const comparison = await bcrypt.compare(password, user.password);
 
-		if (!comparison)
+		if (!comparison) {
 			return res.status(401).send({ message: "Contraseña incorrecta" });
+		}
 
 		const secretKey = "hoteles-starligth";
 		const typeUser = user.class;
@@ -38,8 +40,8 @@ export const login = async (req, res) => {
 				email: user.email,
 			},
 		});
-	} catch {
-		console.error("Error en login:", error);
+	} catch (error) { 
+		console.error("Error en login:", error); 
 		return res.status(500).json({ message: "Error en el servidor" });
 	}
 };
@@ -48,21 +50,17 @@ export const register = async (req, res) => {
 	try {
 		const { name, surname, dni, cellNumber, email, password } = req.body;
 
-		const user = await User.findOne({
-			where: {
-				email,
-			},
-		});
+		const user = await User.findOne({ where: { email } });
 
-		if (user) return res.status(400).send({ message: "Usuario existente" });
+		if (user) {
+			return res.status(400).send({ message: "Usuario existente" });
+		}
 
 		const saltRounds = 10;
-
 		const salt = await bcrypt.genSalt(saltRounds);
-
 		const hashedPassword = await bcrypt.hash(password, salt);
 
-		const newUser = await User.create({
+		await User.create({
 			name,
 			surname,
 			dni,
@@ -71,9 +69,9 @@ export const register = async (req, res) => {
 			password: hashedPassword,
 		});
 
-		res.json({ message: `El usuario ${name} se ha registrado correctamente.` });
-	} catch (err) {
-		console.error(err);
+		return res.json({ message: `El usuario ${name} se ha registrado correctamente.` });
+	} catch (error) {
+		console.error("Error en register:", error);
 		return res.status(500).json({ message: "Error en el servidor" });
 	}
 };

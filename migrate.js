@@ -1,29 +1,48 @@
 
+import sqlite3pkg from "sqlite3";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
-import { migrateTarifa, revertMigration } from "./src/migrateTarifa.js";
+const sqlite3 = sqlite3pkg.verbose();
 
-async function main() {
-  const command = process.argv[2];
-  
-  console.log("🏨 Migración de Base de Datos - Sistema de Tarifas");
-  console.log("=" .repeat(50));
-  
-  try {
-    if (command === 'revert') {
-      console.log("🔄 Iniciando reversión de migración...");
-      await revertMigration();
-    } else {
-      console.log("🚀 Iniciando migración de tarifas...");
-      await migrateTarifa();
-    }
-    
-    console.log("✅ Proceso completado exitosamente");
-  } catch (error) {
-    console.error("❌ Error en el proceso:", error.message);
+// Obtener __dirname equivalente en ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Ruta absoluta al archivo hotel.db
+const dbPath = path.join(__dirname, "hotel.db");
+
+// Conexión a la base
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error("❌ Error al conectar con la base de datos:", err.message);
     process.exit(1);
-  } finally {
-    process.exit(0);
   }
-}
+  console.log("✅ Conectado a la base de datos hotel.db");
+});
 
-main();
+
+db.all("PRAGMA table_info(Users)", (err, columns) => {
+  if (err) {
+    console.error("❌ Error al leer estructura de la tabla:", err.message);
+    return;
+  }
+
+  const columnExists = columns.some((col) => col.name === "active");
+
+  if (columnExists) {
+    console.log("ℹ️ La columna 'active' ya existe en la tabla Users.");
+    db.close();
+  } else {
+    const query = 'ALTER TABLE Users ADD COLUMN active BOOLEAN DEFAULT 1;';
+    db.run(query, (err) => {
+      if (err) {
+        console.error("❌ Error al agregar la columna:", err.message);
+      } else {
+        console.log("✅ Columna 'active' agregada correctamente a la tabla Users.");
+      }
+      db.close();
+    });
+  }
+});

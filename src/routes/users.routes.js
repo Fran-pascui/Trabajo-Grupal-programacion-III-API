@@ -12,8 +12,8 @@ router.get('/:dni', verifyToken, async (req, res) => {
     const { dni } = req.params;
     
    
-    const tokenData = req.user;
-    if (tokenData.dni !== parseInt(dni)) {
+    const authUser = await User.findOne({ where: { email: tokenData.email } });
+    if (!authUser || authUser.dni !== parseInt(dni)) {
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para acceder a este perfil' 
@@ -59,8 +59,8 @@ router.put('/:dni', verifyToken, async (req, res) => {
     const { dni } = req.params;
     const { name, surname, email, cellNumber } = req.body;
 
-    const tokenData = req.user;
-    if (tokenData.dni !== parseInt(dni)) {
+    const authUser = await User.findOne({ where: { email: tokenData.email } });
+    if (!authUser || authUser.dni !== parseInt(dni)) {
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para actualizar este perfil' 
@@ -154,8 +154,8 @@ router.put('/:dni/password', verifyToken, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
 
     
-    const tokenData = req.user;
-    if (tokenData.dni !== parseInt(dni)) {
+    const authUser = await User.findOne({ where: { email: tokenData.email } });
+    if (!authUser || authUser.dni !== parseInt(dni)) {
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para cambiar esta contraseña' 
@@ -221,24 +221,24 @@ router.get('/:dni/reservations', verifyToken, async (req, res) => {
     const { dni } = req.params;
 
     
-    const tokenData = req.user;
-    if (tokenData.dni !== parseInt(dni)) {
+    const authUser = await User.findOne({ where: { email: tokenData.email } });
+    if (!authUser || authUser.dni !== parseInt(dni)) {
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para ver estas reservas' 
       });
     }
-
+    console.log('[UsersRoutes][RESERVATIONS][FETCH]', { dni });
     const reservations = await Reservations.findAll({
       where: { user_Dni: dni },
       include: [{
         model: Rooms,
-        as: 'Room',
+    
         attributes: ['Id', 'Nombre', 'Tipo', 'Tarifa']
       }],
       order: [['Id', 'DESC']]
     });
-
+     console.log('[UsersRoutes][RESERVATIONS][RESULT_COUNT]', reservations?.length);
     res.json({
       success: true,
       data: reservations,
@@ -246,7 +246,7 @@ router.get('/:dni/reservations', verifyToken, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error al obtener reservas:', error);
+    console.error('[UsersRoutes][RESERVATIONS][ERROR]', error);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor',
