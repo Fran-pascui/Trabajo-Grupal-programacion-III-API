@@ -10,9 +10,9 @@ const router = express.Router();
 router.get('/:dni', verifyToken, async (req, res) => {
   try {
     const { dni } = req.params;
-    
-   
-    const authUser = await User.findOne({ where: { email: tokenData.email } });
+
+
+    const authUser = await User.findOne({ where: { email: req.user.email } });
     if (!authUser || authUser.dni !== parseInt(dni)) {
       return res.status(403).json({ 
         success: false, 
@@ -153,8 +153,8 @@ router.put('/:dni/password', verifyToken, async (req, res) => {
     const { dni } = req.params;
     const { currentPassword, newPassword } = req.body;
 
-    
-    const authUser = await User.findOne({ where: { email: tokenData.email } });
+
+    const authUser = await User.findOne({ where: { email: req.user.email } });
     if (!authUser || authUser.dni !== parseInt(dni)) {
       return res.status(403).json({ 
         success: false, 
@@ -220,8 +220,8 @@ router.get('/:dni/reservations', verifyToken, async (req, res) => {
   try {
     const { dni } = req.params;
 
-    
-    const authUser = await User.findOne({ where: { email: tokenData.email } });
+
+    const authUser = await User.findOne({ where: { email: req.user.email } });
     if (!authUser || authUser.dni !== parseInt(dni)) {
       return res.status(403).json({ 
         success: false, 
