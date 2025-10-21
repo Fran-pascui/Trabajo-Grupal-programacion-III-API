@@ -14,7 +14,11 @@ import {
 import { verifyToken } from "../services/authMidleware.js";
 import servicesRoutes from "./services.routes.js";
 import usersRoutes from "./users.routes.js";
-import { emailAdminSearch, updateRol } from "../services/sysadmin.services.js";
+import {
+	emailAdminSearch,
+	updateRol,
+	changeActive,
+} from "../services/sysadmin.services.js";
 
 const router = Router();
 
@@ -25,6 +29,7 @@ router.delete("/:id", verifyToken, deleteReservation);
 
 router.post("/admin/searchemail", verifyToken, emailAdminSearch);
 router.put("/updateRole", verifyToken, updateRol);
+router.put("/:dni/toggle-active", verifyToken, changeActive);
 
 router.get("/rooms", async (req, res) => {
 	try {

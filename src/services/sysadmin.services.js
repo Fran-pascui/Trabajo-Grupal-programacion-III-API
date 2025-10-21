@@ -59,3 +59,22 @@ export const updateRol = async (req, res) => {
 		return res.status(500).json({ error: "Error interno del servidor." });
 	}
 };
+
+export const changeActive = async (req, res) => {
+	try {
+		const dni = req.params;
+		console.log(dni);
+		const user = await User.findByPk(req.params.dni);
+		if (!user)
+			return res.status(404).json({ message: `Usuario no encontrado ${dni}` });
+
+		user.active = !user.active;
+		await user.save();
+
+		res.json({ message: "Estado actualizado", user });
+	} catch (err) {
+		res
+			.status(500)
+			.json({ message: "Error al cambiar estado", error: err.message });
+	}
+};
