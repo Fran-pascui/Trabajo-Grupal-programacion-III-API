@@ -3,6 +3,7 @@ import { User } from '../models/user.js';
 import { Reservations } from '../models/reservation.js';
 import { Rooms } from '../models/rooms.js';
 import { verifyToken } from '../services/authMidleware.js';
+import { Op } from 'sequelize';
 
 const router = express.Router();
 
@@ -10,10 +11,16 @@ const router = express.Router();
 router.get('/:dni', verifyToken, async (req, res) => {
   try {
     const { dni } = req.params;
-
-
-    const authUser = await User.findOne({ where: { email: req.user.email } });
-    if (!authUser || authUser.dni !== parseInt(dni)) {
+    
+    console.log('[UsersRoutes][PROFILE][REQUEST]', { 
+      requestedDni: dni, 
+      tokenDni: req.user.dni,
+      tokenEmail: req.user.email 
+    });
+    
+    // Verificar que el DNI del token coincida con el DNI solicitado
+    if (req.user.dni !== parseInt(dni)) {
+      console.log('[UsersRoutes][PROFILE][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para acceder a este perfil' 
@@ -22,11 +29,18 @@ router.get('/:dni', verifyToken, async (req, res) => {
 
     const user = await User.findByPk(dni);
     if (!user) {
+      console.log('[UsersRoutes][PROFILE][USER_NOT_FOUND]', { dni });
       return res.status(404).json({ 
         success: false, 
         message: 'Usuario no encontrado' 
       });
     }
+    
+    console.log('[UsersRoutes][PROFILE][USER_FOUND]', { 
+      dni: user.dni, 
+      name: user.name, 
+      email: user.email 
+    });
 
     
     const userData = {
@@ -59,8 +73,16 @@ router.put('/:dni', verifyToken, async (req, res) => {
     const { dni } = req.params;
     const { name, surname, email, cellNumber } = req.body;
 
-    const authUser = await User.findOne({ where: { email: tokenData.email } });
-    if (!authUser || authUser.dni !== parseInt(dni)) {
+    console.log('[UsersRoutes][UPDATE][REQUEST]', { 
+      requestedDni: dni, 
+      tokenDni: req.user.dni,
+      tokenEmail: req.user.email,
+      body: { name, surname, email, cellNumber }
+    });
+    
+    // Verificar que el DNI del token coincida con el DNI solicitado
+    if (req.user.dni !== parseInt(dni)) {
+      console.log('[UsersRoutes][UPDATE][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para actualizar este perfil' 
@@ -93,35 +115,52 @@ router.put('/:dni', verifyToken, async (req, res) => {
       });
     }
 
-   
+   console.log('[UsersRoutes][UPDATE][CHECKING_EMAIL_DUPLICATE]', { email, dni });
     const existingUser = await User.findOne({
       where: { 
         email: email,
-        dni: { [require('sequelize').Op.ne]: dni }
+        dni: { [Op.ne]: dni }
       }
     });
-
+   console.log('[UsersRoutes][UPDATE][EMAIL_CHECK_RESULT]', { 
+      existingUser: existingUser ? { dni: existingUser.dni, email: existingUser.email } : null 
+    });
     if (existingUser) {
+      console.log('[UsersRoutes][UPDATE][EMAIL_DUPLICATE_FOUND]', 'Email ya existe');
       return res.status(400).json({
         success: false,
         message: 'Este email ya está en uso por otro usuario'
       });
     }
 
+    console.log('[UsersRoutes][UPDATE][BEFORE_UPDATE]', { dni, name, surname, email, cellNumber });
+    
     const [updatedRowsCount] = await User.update(
       { name, surname, email, cellNumber },
       { where: { dni } }
     );
 
+    console.log('[UsersRoutes][UPDATE][ROWS_UPDATED]', updatedRowsCount);
+
     if (updatedRowsCount === 0) {
+      console.log('[UsersRoutes][UPDATE][USER_NOT_FOUND]', { dni });
       return res.status(404).json({
         success: false,
         message: 'Usuario no encontrado'
       });
     }
 
-  
+    console.log('[UsersRoutes][UPDATE][FETCHING_UPDATED_USER]', { dni });
     const updatedUser = await User.findByPk(dni);
+    
+    if (!updatedUser) {
+      console.log('[UsersRoutes][UPDATE][ERROR_FETCHING_USER]', { dni });
+      return res.status(500).json({
+        success: false,
+        message: 'Error al obtener usuario actualizado'
+      });
+    }
+    
     const userData = {
       dni: updatedUser.dni,
       name: updatedUser.name,
@@ -131,6 +170,7 @@ router.put('/:dni', verifyToken, async (req, res) => {
       class: updatedUser.class
     };
 
+    console.log('[UsersRoutes][UPDATE][SUCCESS]', userData);
     res.json({
       success: true,
       data: userData,
@@ -138,7 +178,7 @@ router.put('/:dni', verifyToken, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error al actualizar perfil:', error);
+    console.error('[UsersRoutes][UPDATE][ERROR]', error);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor',
@@ -153,9 +193,15 @@ router.put('/:dni/password', verifyToken, async (req, res) => {
     const { dni } = req.params;
     const { currentPassword, newPassword } = req.body;
 
-
-    const authUser = await User.findOne({ where: { email: req.user.email } });
-    if (!authUser || authUser.dni !== parseInt(dni)) {
+    console.log('[UsersRoutes][PASSWORD][REQUEST]', { 
+      requestedDni: dni, 
+      tokenDni: req.user.dni,
+      tokenEmail: req.user.email 
+    });
+    
+    // Verificar que el DNI del token coincida con el DNI solicitado
+    if (req.user.dni !== parseInt(dni)) {
+      console.log('[UsersRoutes][PASSWORD][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para cambiar esta contraseña' 
@@ -220,14 +266,21 @@ router.get('/:dni/reservations', verifyToken, async (req, res) => {
   try {
     const { dni } = req.params;
 
-
-    const authUser = await User.findOne({ where: { email: req.user.email } });
-    if (!authUser || authUser.dni !== parseInt(dni)) {
+    console.log('[UsersRoutes][RESERVATIONS][REQUEST]', { 
+      requestedDni: dni, 
+      tokenDni: req.user.dni,
+      tokenEmail: req.user.email 
+    });
+    
+    // Verificar que el DNI del token coincida con el DNI solicitado
+    if (req.user.dni !== parseInt(dni)) {
+      console.log('[UsersRoutes][RESERVATIONS][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
         success: false, 
         message: 'No tienes permisos para ver estas reservas' 
       });
     }
+    
     console.log('[UsersRoutes][RESERVATIONS][FETCH]', { dni });
     const reservations = await Reservations.findAll({
       where: { user_Dni: dni },
