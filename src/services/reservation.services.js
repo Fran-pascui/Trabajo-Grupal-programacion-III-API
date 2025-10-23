@@ -81,3 +81,52 @@ export const deleteReservation = async (req, res) => {
 		return res.status(500).json({ message: "Error interno del servidor" });
 	}
 };
+export const getAllReservations = async (req, res) => {
+	try {
+		console.log('[Reservation][GET_ALL][REQUEST]', { 
+			userType: req.user?.typeUser,
+			userEmail: req.user?.email 
+		});
+
+		
+		if (req.user?.typeUser !== 'admin' && req.user?.typeUser !== 'sysadmin') {
+			console.log('[Reservation][GET_ALL][PERMISSION_DENIED]', 'Usuario no autorizado');
+			return res.status(403).json({
+				success: false,
+				message: 'No tienes permisos para ver todas las reservas'
+			});
+		}
+
+		console.log('[Reservation][GET_ALL][FETCHING]', 'Obteniendo todas las reservas');
+		
+		const reservations = await Reservations.findAll({
+			include: [
+				{
+					model: Rooms,
+					attributes: ['Id', 'Nombre', 'Tipo', 'Tarifa', 'RoomNo']
+				},
+				{
+					model: User,
+					attributes: ['dni', 'name', 'surname', 'email', 'cellNumber']
+				}
+			],
+			order: [['Id', 'DESC']]
+		});
+
+		console.log('[Reservation][GET_ALL][RESULT_COUNT]', reservations?.length);
+
+		res.json({
+			success: true,
+			data: reservations,
+			message: 'Todas las reservas obtenidas exitosamente'
+		});
+
+	} catch (error) {
+		console.error('[Reservation][GET_ALL][ERROR]', error);
+		res.status(500).json({
+			success: false,
+			message: 'Error interno del servidor',
+			error: error.message
+		});
+	}
+};

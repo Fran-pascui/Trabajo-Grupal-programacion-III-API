@@ -18,7 +18,7 @@ router.get('/:dni', verifyToken, async (req, res) => {
       tokenEmail: req.user.email 
     });
     
-    // Verificar que el DNI del token coincida con el DNI solicitado
+  
     if (req.user.dni !== parseInt(dni)) {
       console.log('[UsersRoutes][PROFILE][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
@@ -80,7 +80,7 @@ router.put('/:dni', verifyToken, async (req, res) => {
       body: { name, surname, email, cellNumber }
     });
     
-    // Verificar que el DNI del token coincida con el DNI solicitado
+    
     if (req.user.dni !== parseInt(dni)) {
       console.log('[UsersRoutes][UPDATE][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
@@ -199,7 +199,7 @@ router.put('/:dni/password', verifyToken, async (req, res) => {
       tokenEmail: req.user.email 
     });
     
-    // Verificar que el DNI del token coincida con el DNI solicitado
+    
     if (req.user.dni !== parseInt(dni)) {
       console.log('[UsersRoutes][PASSWORD][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
@@ -272,7 +272,7 @@ router.get('/:dni/reservations', verifyToken, async (req, res) => {
       tokenEmail: req.user.email 
     });
     
-    // Verificar que el DNI del token coincida con el DNI solicitado
+ 
     if (req.user.dni !== parseInt(dni)) {
       console.log('[UsersRoutes][RESERVATIONS][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
