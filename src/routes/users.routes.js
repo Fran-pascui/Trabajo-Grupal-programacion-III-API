@@ -4,7 +4,7 @@ import { Reservations } from '../models/reservation.js';
 import { Rooms } from '../models/rooms.js';
 import { verifyToken } from '../services/authMidleware.js';
 import { Op } from 'sequelize';
-
+import bcrypt from 'bcrypt';
 const router = express.Router();
 
 
@@ -233,16 +233,28 @@ router.put('/:dni/password', verifyToken, async (req, res) => {
     }
 
     
-    if (user.password !== currentPassword) {
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
       return res.status(400).json({
         success: false,
         message: 'Contraseña actual incorrecta'
       });
     }
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'La nueva contraseña debe ser diferente a la actual'
+      });
+    }
 
     
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+    
     await User.update(
-      { password: newPassword },
+      { password: hashedNewPassword },
       { where: { dni } }
     );
 

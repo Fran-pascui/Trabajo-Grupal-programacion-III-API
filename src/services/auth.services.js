@@ -38,7 +38,7 @@ export const login = async (req, res) => {
 		return res.json({
 			token,
 			user: {
-				id: user.id,
+				dni: user.dni,
 				name: user.name,
 				surname: user.surname,
 				email: user.email,
@@ -57,7 +57,7 @@ export const register = async (req, res) => {
 		const user = await User.findOne({ where: { email } });
 
 		if (user) {
-			return res.status(400).send({ message: "Usuario existente" });
+			return res.status(400).send({ message: "Este email ya está registrado" });
 		}
 
 		const saltRounds = 10;
