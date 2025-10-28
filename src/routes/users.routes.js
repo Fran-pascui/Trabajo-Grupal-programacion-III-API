@@ -2,9 +2,11 @@ import express from 'express';
 import { User } from '../models/user.js';
 import { Reservations } from '../models/reservation.js';
 import { Rooms } from '../models/rooms.js';
+import { sequelize } from '../db.js';
 import { verifyToken } from '../services/authMidleware.js';
 import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
+
 const router = express.Router();
 
 
@@ -240,6 +242,8 @@ router.put('/:dni/password', verifyToken, async (req, res) => {
         message: 'Contraseña actual incorrecta'
       });
     }
+
+    
     const isSamePassword = await bcrypt.compare(newPassword, user.password);
     if (isSamePassword) {
       return res.status(400).json({
@@ -284,7 +288,7 @@ router.get('/:dni/reservations', verifyToken, async (req, res) => {
       tokenEmail: req.user.email 
     });
     
- 
+  
     if (req.user.dni !== parseInt(dni)) {
       console.log('[UsersRoutes][RESERVATIONS][PERMISSION_DENIED]', 'DNI no coincide');
       return res.status(403).json({ 
@@ -299,20 +303,103 @@ router.get('/:dni/reservations', verifyToken, async (req, res) => {
       include: [{
         model: Rooms,
     
-        attributes: ['Id', 'Nombre', 'Tipo', 'Tarifa']
+        attributes: ['Id', 'Nombre', 'Tipo', 'Tarifa', 'RoomNo']
       }],
       order: [['Id', 'DESC']]
     });
-     console.log('[UsersRoutes][RESERVATIONS][RESULT_COUNT]', reservations?.length);
+    
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const reservationsWithStatus = reservations.map(reservation => {
+      const reservationData = reservation.toJSON();
+      let displayStatus = reservationData.status;
+      
+      if (displayStatus === "active") {
+        const checkOutDate = new Date(reservationData.checkOut);
+        checkOutDate.setHours(0, 0, 0, 0);
+        
+        if (checkOutDate < today) {
+          displayStatus = "expired";
+        }
+      }
+      
+      return {
+        ...reservationData,
+        displayStatus
+      };
+    });
+    
+     console.log('[UsersRoutes][RESERVATIONS][RESULT_COUNT]', reservationsWithStatus?.length);
     res.json({
       success: true,
-      data: reservations,
+      data: reservationsWithStatus,
       message: 'Reservas obtenidas exitosamente'
     });
 
   } catch (error) {
     console.error('[UsersRoutes][RESERVATIONS][ERROR]', error);
     res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor',
+      error: error.message
+    });
+  }
+});
+
+router.put('/reservations/:id/cancel', verifyToken, async (req, res) => {
+  const t = await sequelize.transaction();
+  try {
+    const { id } = req.params;
+    const { dni } = req.user;
+    
+    console.log('[UsersRoutes][RESERVATION_CANCEL][REQUEST]', { 
+      reservationId: id, 
+      userId: dni
+    });
+    
+    const reservation = await Reservations.findByPk(id, { transaction: t });
+    
+    if (!reservation) {
+      await t.rollback();
+      return res.status(404).json({ 
+        success: false,
+        message: 'Reserva no encontrada' 
+      });
+    }
+    
+   
+    if (reservation.user_Dni !== dni) {
+      await t.rollback();
+      return res.status(403).json({ 
+        success: false,
+        message: 'No tienes permisos para cancelar esta reserva' 
+      });
+    }
+    
+   
+    await reservation.update({ status: 'cancelled' }, { transaction: t });
+    
+   
+    const room = await Rooms.findByPk(reservation.room_Id, { transaction: t });
+    if (room) {
+      await room.update({ Disponible: true }, { transaction: t });
+    }
+    
+    await t.commit();
+    
+    console.log('[UsersRoutes][RESERVATION_CANCEL][SUCCESS]', { reservationId: id });
+    
+    res.json({
+      success: true,
+      message: 'Reserva cancelada exitosamente'
+    });
+    
+  } catch (error) {
+    await t.rollback();
+    console.error('[UsersRoutes][RESERVATION_CANCEL][ERROR]', error);
+    res.status(500).json({ 
       success: false,
       message: 'Error interno del servidor',
       error: error.message

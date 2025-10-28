@@ -25,6 +25,11 @@ export const Reservations = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
+		status: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			defaultValue: "active",
+		},
 	},
 	{ timestamps: false }
 );
