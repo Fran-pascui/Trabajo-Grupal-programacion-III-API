@@ -2,10 +2,12 @@ import { Router } from "express";
 import { verifyToken } from "../services/authMidleware.js";
 import { emailAdminSearch } from "../services/sysadmin.services.js";
 import { getAllReservations } from "../services/reservation.services.js";
-import express from "express";
+import { refreshRoomAvailability } from "../services/hotel.services.js";
 
-export const router = express.Router();
+const router = Router();
 
-router.post("/admin/searchemail", emailAdminSearch);
+router.post("/admin/searchemail", verifyToken, emailAdminSearch);
 router.get("/admin/reservations", verifyToken, getAllReservations);
+router.post("/admin/refresh-availability", verifyToken, refreshRoomAvailability);
+
 export default router;

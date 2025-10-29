@@ -201,10 +201,14 @@ export const cancelReservation = async (req, res) => {
     await reservation.update({ status: "cancelled" }, { transaction: t });
 
     const room = await Rooms.findByPk(reservation.room_Id, { transaction: t });
-    if (room) {
-      room.Disponible = true;
-      await room.save({ transaction: t });
-    }
+		if (room) {
+			await room.update({ Disponible: true }, { transaction: t });
+			console.log('[Reservation][CANCEL][ROOM_UPDATED]', { 
+				roomId: room.Id, 
+				roomNo: room.RoomNo,
+				disponible: true 
+			});
+		}
 
     await t.commit();
 

@@ -385,6 +385,11 @@ router.put('/reservations/:id/cancel', verifyToken, async (req, res) => {
     const room = await Rooms.findByPk(reservation.room_Id, { transaction: t });
     if (room) {
       await room.update({ Disponible: true }, { transaction: t });
+      console.log('[UsersRoutes][RESERVATION_CANCEL][ROOM_UPDATED]', { 
+        roomId: room.Id, 
+        roomNo: room.RoomNo,
+        disponible: true 
+      });
     }
     
     await t.commit();
